@@ -1,4 +1,56 @@
-import bycript from "bcryptjs";
+import bycript from "bcrypt";
 import jwt from "jsonwebtoken";
-import { env } from "../../../config/env.js";
+import { env } from "../../config/env.js";
 import * as UserRepo from "./auth.repository.js";
+
+export async function register(payload) {
+  const existing = await UserRepo.findByUsuario(payload.usuario);
+  if (existing) {
+    const err = new Error("Usuario ya existe");
+    err.statusCode = 400;
+    throw err;
+  }
+  const hash = await bcrypt.hash(payload.password, 10);
+  const user = await UserRepocreateUser({
+    matricula: payload.matricula,
+    nombre: payload.nombre,
+    apaterno: payload.apaterno,
+    amaterno: payload.amaterno ?? "",
+    usuario: payload.usuario,
+    passwordHash: hash,
+    activo: true,
+  });
+  return sanitize(user);
+}
+
+export async function login(usuario, password) {
+  const existing = await UserRepo.findByUsuario(usuario);
+  if (!existing || !existing.activo) {
+    const err = new Error("Usuario invalido o inactivo");
+    err.statusCode = 401;
+    throw err;
+  }
+  const ok = await bcrypt.compare(password, existing.passwordHash);
+  if (!ok) {
+    const err = new Error("Constrasenia incorrecta");
+    err.statusCode = 401;
+    throw err;
+  }
+  const token = jwt.sign(
+    {
+      userId: existing.id,
+      matricula: existing.matricula,
+      nombre: existing.nombre,
+      apaterno: existing.apaterno,
+      amaterno: existing.amaterno ?? "",
+    },
+    env.JWT_SECRET,
+    { expiresIn: env.JWT_EXPIRES_IN },
+  );
+  return { token, user: sanitize(existing) };
+}
+
+function sanitize(user) {
+  const { passwordHash, ...safe } = user;
+  return safe;
+}
