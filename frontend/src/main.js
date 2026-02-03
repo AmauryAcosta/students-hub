@@ -57,8 +57,8 @@ const refresh = async () => {
     if (qS) {
       query.set("q", qS);
     }
-    if (activo) {
-      query.set("activo", act);
+    if (act) {
+      query.set("activo", act === "true");
     }
     const { items } = await api(`/users?${query.toString()}`);
     console.log("@@@ items => ", items);
@@ -83,6 +83,6 @@ loginForm.addEventListener("submit", async (e) => {
     loginInfo.textContent = `OK: ${res.user.nombre} ${res.user.usuario}`;
     refresh();
   } catch (error) {
-    loginInfo.textContet = `Error: ${error.message}`;
+    loginInfo.textContent = `Error: ${error.message}`;
   }
 });

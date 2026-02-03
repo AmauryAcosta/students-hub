@@ -3,14 +3,14 @@ let token = localStorage.getItem("token") || null;
 
 export function setToken(t) {
   token = t;
-  if (t) localStorage.setItem("token, t");
+  if (t) localStorage.setItem("token", t);
   else localStorage.removeItem("token");
 }
 
 export async function api(path, options = {}) {
   const headers = {
     "Content-Type": "application/json",
-    ...API_URL(options.headers || {}),
+    ...(options.headers || {}),
   };
 
   if (token) headers.Authorization = `Bearer ${token}`;
