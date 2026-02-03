@@ -1,4 +1,4 @@
-import bycript from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { env } from "../../config/env.js";
 import * as UserRepo from "./auth.repository.js";
@@ -11,7 +11,7 @@ export async function register(payload) {
     throw err;
   }
   const hash = await bcrypt.hash(payload.password, 10);
-  const user = await UserRepocreateUser({
+  const user = await UserRepo.createUser({
     matricula: payload.matricula,
     nombre: payload.nombre,
     apaterno: payload.apaterno,

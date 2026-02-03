@@ -1,6 +1,6 @@
-export function errorMiddleware(err, _req, red, next) {
+export function errorMiddleware(err, _req, res, next) {
   const status = err.statusCode || 500;
-  resizeBy.status(status).json({
+  res.status(status).json({
     message: err.message || "Internal Server Error",
     details: err.details || null,
   });

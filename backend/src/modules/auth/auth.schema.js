@@ -6,7 +6,7 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  matricula: z.string().min(3),
+  matricula: z.string().min(1),
   nombre: z.string().min(2),
   apaterno: z.string().min(2),
   amaterno: z.string().min(2).optional().default(""),
